@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body{
+  width: 100vw;
+  height: 100vh;
+  font-family: Arial, Helvetica, sans-serif
+}
+.info-table {
+  text-align: center;
+  width: 95%;
+  margin: auto;
+  margin-top: 20px;
+  border-radius: 5px;
+  border-color: #0D0D0D
+}
+  .info-table  th {
+  color: #00C3FF;
+  background: #FFF400;
+  width: 50%;
+  padding: 10px;
+}
+   .info-table td {
+  color: #FF2626;
+  padding: 10px;
+  background: #0563FF;
+  width: 50%
+}
+#Info{
+   width: 95%;
+   padding: 10px;
+   border: 2px solid #000000;
+   outline: none;
+   border-radius: 5px;
+   font-size: 1.1rem;
+   background: #E5E9F0;
+   color: #00C3FF;
+   transition: border-color 0.4s 0.1s linear
+}
+#Info:focus{
+  border-color: #0862FF
+}
+.input-container{
+  width: 90%;
+  margin: auto;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center
+}
+.input-container label{
+ font-size: 1.1rem;
+margin-top: 10px
+}
+/* Error message box */
+.error-message {
+  width: 90%;
+  margin: 20px auto;
+  padding: 10px;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  border-radius: 5px;
+  display: none;
+  text-align: center;
+}
+.print{
+  background: #FFFFFF;
+  color: #0074FF;
+  border: 1px solid;
+  padding: 10px;
+  margin-left: 45%;
+  margin-top: 20px;
+  transition: background-color,color 0.4s 0.1s linear;
+  border-radius: 5px
+}
+.print:hover{
+  background: #0074FF;
+  color: #fff;
+}
+  </style>
+  <title>Info</title>
+</head>
+<body>
+  <div class="input-container">
+<label for="Info">Hint:</label>
+<input type="text" id="Info" placeholder="Type country, capital, currency,phone code or other info">
+  </div>
+
+  <div class="error-message" id="errorMessage">Unable to fetch data!</div>
+<button class="print">Print</button>
+<div class="container">
+  <table class="info-table" border="2px" cellspacing="0">
+<tr>
+<th>Country Name</th>
+<td class="country"></td>
+</tr>
+<tr>
+<th>Capital</th>
+<td class="capital"></td>
+</tr>
+<tr>
+<th>Currency</th>
+<td class="currency"></td>
+</tr>
+<tr>
+  <th>Currency Code</th>
+  <td class="currency-code"></td>
+</tr>
+<tr>
+<th>Phone Code</th>
+<td class="phone-code"></td>
+</tr>
+<tr>
+  <th>Flag</th>
+  <td class="flag"></td>
+</tr>
+<tr>
+  <th>Population</th>
+  <td class="population"></td>
+</tr>
+<tr>
+  <th>Main language</th>
+  <td class="language"></td>
+</tr>
+<tr>
+  <th>Position</th>
+  <td class="position"></td>
+</tr>
+
+<tr>
+  <th>Country code</th>
+  <td class="country-code"></td>
+</tr>
+<tr>
+  <th>Time Zone</th>
+  <td class="time-zone"></td>
+</tr>
+  </table>
+</div>
+  <script>
+  // Select elements
+  const countryEl = document.querySelector('.country');
+  const capitalEl = document.querySelector('.capital');
+  const currencyEl = document.querySelector('.currency');
+  const phoneCodeEl = document.querySelector('.phone-code');
+  const CurrencyCode = document.querySelector('.currency-code');
+  const Flag = document.querySelector('.flag');
+  const Population = document.querySelector('.population');
+  const Language = document.querySelector('.language');
+  const Position = document.querySelector('.position');
+  const CountryCode = document.querySelector('.country-code');
+  const TimeZone = document.querySelector('.time-zone');
+  const inputEl = document.querySelector('#Info');
+  const errorMessageEl = document.getElementById('errorMessage');
+  // Fetch JSON data from GitHub
+  async function fetchData() {
+try {
+  const response = await fetch('info.json');
+  const data = await response.json();
+  return data;
+} catch (error) {
+  errorMessageEl.textContent = "Error: Unable to fetch data!";
+  errorMessageEl.style.display = 'block';
+  throw error; // Rethrow the error for handling
+}
+  }
+
+  // Initialize the data fetch and input event listener
+  async function init() {
+const data = await fetchData();
+
+// Add event listener to input field
+inputEl.addEventListener('input', () => {
+  const query = inputEl.value.toLowerCase().trim();
+
+  // Search for the country info that matches the query
+  const result = data.find(item =>
+(item.country && item.country.toLowerCase().includes(query)) ||
+(item.capital && item.capital.toLowerCase().includes(query)) ||
+(item.currency && item.currency.toLowerCase().includes(query)) ||
+(item.phone_code && item.phone_code.toLowerCase().includes(query)) || 
+(item.currency_code && item.currency_code.toLowerCase().includes(query)) || 
+(item.flag && item.flag.toLowerCase().includes(query)) || 
+(item.population && item.population.toLowerCase().includes(query)) || 
+(item.main_language && item.main_language.toLowerCase().includes(query)) || 
+(item.position && item.position.toLowerCase().includes(query)) || 
+(item.country_code && item.country_code.toLowerCase().includes(query)) || 
+(item.time_zone && item.time_zone.toLowerCase().includes(query))
+  );
+
+  // If a match is found, update the table
+  if (result) {
+errorMessageEl.style.display = 'none'; // Hide the error message if valid data is found
+countryEl.textContent = result.country || '';
+capitalEl.textContent = result.capital || '';
+currencyEl.textContent = result.currency || '';
+phoneCodeEl.textContent = result.phone_code || '';
+CurrencyCode.textContent = result.currency_code || '';
+Flag.textContent = result.flag || '';
+Population.textContent = result.population || '';
+Language.textContent = result.main_language || '';
+Position.textContent = result.position || '';
+CountryCode.textContent = result.country_code || '';
+TimeZone.textContent = result.time_zone || '';
+  } else {
+// Clear the table if no match is found
+countryEl.textContent = '';
+capitalEl.textContent = '';
+currencyEl.textContent = '';
+phoneCodeEl.textContent = '';
+errorMessageEl.textContent = "Error: No matching country data found!";
+errorMessageEl.style.display = 'block';  // Show the error message
+  }
+});
+  }  // Start the initialization
+  init();
+document.querySelector('.print').addEventListener('click',() => {
+    window.print()
+  })
+</script>
+</body>
+</html>
